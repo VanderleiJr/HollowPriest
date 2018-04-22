@@ -1,8 +1,8 @@
-#include "game.h"
+#include "includes.h"
 
 int main(){
 	Initializers();
-	Game();
+	Menu();
 
 	return 0;
 }
