@@ -12,15 +12,11 @@
 2. [ ]  Sprites
     * [ ] Personagem Principal
     * [ ] Personagens Secundarios
-    * [ ] Itens e Armas
+    * [ ] Armas
     * [ ] Mapa
     * [ ] Chefes
-    * [ ] Menu
 3. [ ] Implementações
     * [ ] Listas
-    * [ ] Fila
-    * [ ] Pilha
-    * [ ] Árvore
 4. [ ] Extras
     * [ ] EasterEggs
     * [ ] Modularização Completa
