@@ -13,13 +13,10 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		while(true){
 			character protagonist;
 			protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
-			protagonist.speed = 5;
-			protagonist.frameWidht = 32;
-			protagonist.frameHeight = 48;
 
 			al_clear_to_color(al_map_rgb(130, 130, 130));
 			al_wait_for_event(event_queue, event);
-			al_draw_bitmap_region(protagonist.spritesWalking, key[lastDirection] * frameCount * protagonist.frameWidht, lastDirection * protagonist.frameHeight, protagonist.frameWidht, protagonist.frameHeight, WIDTH/2 + xVariation, HEIGHT/2 + yVariation, 0);
+			al_draw_bitmap_region(protagonist.spritesWalking, key[lastDirection] * frameCount * CHARACTER_FRAME_WIDHT, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDHT, CHARACTER_FRAME_HEIGHT, WIDTH/2 + xVariation, HEIGHT/2 + yVariation, 0);
 			al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - 20, ALLEGRO_ALIGN_LEFT, "Press [ESC] to menu");
 			al_flip_display();
 
@@ -58,9 +55,9 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 			if(frameCount++ % FPS >= 8)
 				frameCount = 1;
 
-			yVariation -= key[UP] * protagonist.speed;
-			yVariation += key[DOWN] * protagonist.speed;
-			xVariation -= key[LEFT] * protagonist.speed;
-			xVariation += key[RIGHT] * protagonist.speed;
+			yVariation -= key[UP] * CHARACTER_SPEED;
+			yVariation += key[DOWN] * CHARACTER_SPEED;
+			xVariation -= key[LEFT] * CHARACTER_SPEED;
+			xVariation += key[RIGHT] * CHARACTER_SPEED;
 	}
 }

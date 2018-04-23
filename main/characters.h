@@ -4,9 +4,6 @@
 typedef struct {
 	int life;
 	int stamina;
-	int speed;
-	int frameWidht;
-	int frameHeight;
 	ALLEGRO_BITMAP *spritesWalking;
 }character;
 
