@@ -9,7 +9,7 @@ void Initializers(){
 	al_install_keyboard();
 }
 
-void Menu(){
+void FirstMenu(){
 	//Variáveis
 	int exit = 0;
 	int menu = 0;
@@ -45,7 +45,7 @@ void Menu(){
 				menu_variation = !menu_variation;
 		}
 
-		al_draw_text(title, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT / 2 - 150, ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
+		al_draw_text(title, COLOR_RED, WIDTH/2, HEIGHT / 2 - 150, ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
 
 		al_draw_text(font50, al_map_rgb(color, color, color), WIDTH/2, HEIGHT / 2 + 110, ALLEGRO_ALIGN_CENTRE, "Press [ENTER]");
 		if(!color_variation){
@@ -72,7 +72,7 @@ void Menu(){
 			}
 			//ENTER para INICIAR
 			if(event.keyboard.keycode == ALLEGRO_KEY_ENTER){
-				Game(display, footer, event_queue, timer, &event);
+				SecondMenu(display, menu_background, title, footer, font50, event_queue, timer, &event);
 			}
 		menu = !menu;
 		}
@@ -85,4 +85,78 @@ void Menu(){
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
 	al_destroy_display(display);
+}
+
+void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEGRO_FONT *title, ALLEGRO_FONT *footer,
+		  		ALLEGRO_FONT *font50, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
+		  		ALLEGRO_EVENT *event){
+
+	const int numberOptions = 4;
+	int selectOption = 0;
+	int color = 0;
+	int color_variation = 0;
+
+	ALLEGRO_FONT *subtitle = al_load_ttf_font("../media/fonts/FancyCardText.ttf", 110, 0);
+	
+	while(true){
+		al_draw_bitmap(menu_background, -270, 0, 0);
+		al_draw_text(subtitle, al_map_rgb(color, 0, 0), WIDTH / 2, 150, ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
+		if(!color_variation){
+			color+=5;
+			if(color == 255){
+				color_variation = !color_variation;
+			}
+		} else {
+			color-=5;
+			if(color == 0){
+				color_variation = !color_variation;
+			}
+		}
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 420, ALLEGRO_ALIGN_CENTRE, "New Game");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 480, ALLEGRO_ALIGN_CENTRE, "Configuration");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 540, ALLEGRO_ALIGN_CENTRE, "Records");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 600, ALLEGRO_ALIGN_CENTRE, "Exit");
+		
+		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - 20, 0, "By Vanderlei Junior");
+
+		switch(selectOption){
+			case 0:
+				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 420, ALLEGRO_ALIGN_CENTRE, "->");
+				break;
+			case 1:
+				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 480, ALLEGRO_ALIGN_CENTRE, "->");
+				break;
+			case 2:
+				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 540, ALLEGRO_ALIGN_CENTRE, "->");
+				break;
+			case 3:
+				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 600, ALLEGRO_ALIGN_CENTRE, "->");
+				break;
+		}
+
+		al_flip_display();
+		al_wait_for_event(event_queue, event);
+		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
+			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER){
+				switch(selectOption){
+					case 0:
+						Game(display, footer, event_queue, timer, event);
+						break;
+					case 3:
+						al_destroy_font(subtitle);
+						return ;
+				}
+			}
+			switch(event->keyboard.keycode){
+				case ALLEGRO_KEY_W:
+					selectOption--; break;
+				case ALLEGRO_KEY_S:
+					selectOption++; break;
+			}
+			if(selectOption >= numberOptions)
+				selectOption = 0;
+			else if(selectOption < 0)
+				selectOption = numberOptions - 1;
+		}
+	}
 }

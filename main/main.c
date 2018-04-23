@@ -2,7 +2,7 @@
 
 int main(){
 	Initializers();
-	Menu();
+	FirstMenu();
 
 	return 0;
 }

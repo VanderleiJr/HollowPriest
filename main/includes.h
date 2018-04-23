@@ -18,14 +18,15 @@
 #define FPS 30
 #define WIDTH 1360
 #define HEIGHT 800
-#define CHARACTER_FRAME_WIDHT 32
-#define CHARACTER_FRAME_HEIGHT 48
 #define CHARACTER_SPEED 5
 #define CHARACTER_MAX_LIFE 100
 #define CHARACTER_MAX_STAMINA 100
+#define CHARACTER_FRAME_WIDHT 32
+#define CHARACTER_FRAME_HEIGHT 48
 
 //Cores
 #define COLOR_BLACK al_map_rgb(0,0,0)
 #define COLOR_WHITE al_map_rgb(255,255,255)
+#define COLOR_RED al_map_rgb(255,0,0)
 
 #endif	//INCLUDE_H

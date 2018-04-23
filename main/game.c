@@ -10,13 +10,14 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		int yVariation = -20;
 		int key[] = {0, 0, 0, 0};
 
+		character protagonist;
+		protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
+
 		while(true){
-			character protagonist;
-			protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
 
 			al_clear_to_color(al_map_rgb(130, 130, 130));
 			al_wait_for_event(event_queue, event);
-			al_draw_bitmap_region(protagonist.spritesWalking, key[lastDirection] * frameCount * CHARACTER_FRAME_WIDHT, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDHT, CHARACTER_FRAME_HEIGHT, WIDTH/2 + xVariation, HEIGHT/2 + yVariation, 0);
+			al_draw_bitmap_region(protagonist.spritesWalking, (key[0] || key[1] || key[2] || key[3]) * frameCount * CHARACTER_FRAME_WIDHT, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDHT, CHARACTER_FRAME_HEIGHT, WIDTH/2 + xVariation, HEIGHT/2 + yVariation, 0);
 			al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - 20, ALLEGRO_ALIGN_LEFT, "Press [ESC] to menu");
 			al_flip_display();
 
