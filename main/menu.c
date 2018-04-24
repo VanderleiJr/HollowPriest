@@ -20,9 +20,9 @@ void FirstMenu(){
 
 	//Leitura de Arquivos
 	ALLEGRO_DISPLAY *display = al_create_display(WIDTH, HEIGHT);
-	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/FancyCardText.ttf", 130, 0);
-	ALLEGRO_FONT *font50 = al_load_ttf_font("../media/fonts/TheNovice.ttf", 50, 0);
-	ALLEGRO_FONT *footer = al_load_ttf_font("../media/fonts/TheNovice.ttf", 15, 0);
+	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/FancyCardText.ttf", (0.1625 * HEIGHT), 0);
+	ALLEGRO_FONT *font50 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.0625 * HEIGHT), 0);
+	ALLEGRO_FONT *footer = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.01875 * HEIGHT), 0);
 	ALLEGRO_BITMAP *menu_background = al_load_bitmap("../media/sprites/menu_background.jpg");
 	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
 	ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
@@ -45,9 +45,9 @@ void FirstMenu(){
 				menu_variation = !menu_variation;
 		}
 
-		al_draw_text(title, COLOR_RED, WIDTH/2, HEIGHT / 2 - 150, ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
+		al_draw_text(title, COLOR_RED, WIDTH/2, HEIGHT / 2 - (0.1875 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
 
-		al_draw_text(font50, al_map_rgb(color, color, color), WIDTH/2, HEIGHT / 2 + 110, ALLEGRO_ALIGN_CENTRE, "Press [ENTER]");
+		al_draw_text(font50, al_map_rgb(color, color, color), WIDTH/2, HEIGHT / 2 + (0.1375 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Press [ENTER]");
 		if(!color_variation){
 			color+=5;
 			if(color == 255){
@@ -60,8 +60,8 @@ void FirstMenu(){
 			}
 		}
 
-		al_draw_text(footer, COLOR_WHITE, WIDTH/2, HEIGHT - 20, ALLEGRO_ALIGN_CENTRE, "Press [ESC] to exit");
-		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - 20, 0, "By Vanderlei Junior");
+		al_draw_text(footer, COLOR_WHITE, WIDTH/2, HEIGHT - (0.025 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Press [ESC] to exit");
+		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "By Vanderlei Junior");
 		al_flip_display();
 		al_wait_for_event(event_queue, &event);
 
@@ -96,11 +96,12 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 	int color = 0;
 	int color_variation = 0;
 
-	ALLEGRO_FONT *subtitle = al_load_ttf_font("../media/fonts/FancyCardText.ttf", 110, 0);
+	ALLEGRO_FONT *subtitle = al_load_ttf_font("../media/fonts/FancyCardText.ttf", (0.1375 * HEIGHT), 0);
+	ALLEGRO_BITMAP *cursor = al_load_bitmap("../media/sprites/cursor.png");
 	
 	while(true){
 		al_draw_bitmap(menu_background, -270, 0, 0);
-		al_draw_text(subtitle, al_map_rgb(color, 0, 0), WIDTH / 2, 150, ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
+		al_draw_text(subtitle, al_map_rgb(color, 0, 0), WIDTH / 2, (0.185 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Hollow Priest");
 		if(!color_variation){
 			color+=5;
 			if(color == 255){
@@ -112,25 +113,29 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 				color_variation = !color_variation;
 			}
 		}
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 420, ALLEGRO_ALIGN_CENTRE, "New Game");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 480, ALLEGRO_ALIGN_CENTRE, "Configuration");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 540, ALLEGRO_ALIGN_CENTRE, "Records");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, 600, ALLEGRO_ALIGN_CENTRE, "Exit");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.525 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "New Game");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.600 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Configuration");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.675 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Records");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.750 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Exit");
 		
-		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - 20, 0, "By Vanderlei Junior");
+		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "By Vanderlei Junior");
 
 		switch(selectOption){
 			case 0:
-				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 420, ALLEGRO_ALIGN_CENTRE, "->");
+				al_draw_bitmap(cursor, WIDTH / 2 - (0.147 * WIDTH), (0.550 * HEIGHT), 0);
+				al_draw_bitmap(cursor, WIDTH / 2 + (0.117 * WIDTH), (0.550 * HEIGHT), 0);
 				break;
 			case 1:
-				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 480, ALLEGRO_ALIGN_CENTRE, "->");
+				al_draw_bitmap(cursor, WIDTH / 2 - (0.147 * WIDTH), (0.625 * HEIGHT), 0);
+				al_draw_bitmap(cursor, WIDTH / 2 + (0.117 * WIDTH), (0.625 * HEIGHT), 0);
 				break;
 			case 2:
-				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 540, ALLEGRO_ALIGN_CENTRE, "->");
+				al_draw_bitmap(cursor, WIDTH / 2 - (0.147 * WIDTH), (0.700 * HEIGHT), 0);
+				al_draw_bitmap(cursor, WIDTH / 2 + (0.117 * WIDTH), (0.700 * HEIGHT), 0);
 				break;
 			case 3:
-				al_draw_text(font50, COLOR_WHITE, WIDTH / 2 - 200, 600, ALLEGRO_ALIGN_CENTRE, "->");
+				al_draw_bitmap(cursor, WIDTH / 2 - (0.147 * WIDTH), (0.775 * HEIGHT), 0);
+				al_draw_bitmap(cursor, WIDTH / 2 + (0.117 * WIDTH), (0.775 * HEIGHT), 0);
 				break;
 		}
 
