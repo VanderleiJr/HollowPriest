@@ -10,19 +10,23 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		int yVariation = -20;
 		int key[] = {0, 0, 0, 0};
 
-		int score = 0;
+
+		ALLEGRO_FONT *fontScore = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.05 * HEIGHT), 0);
 
 		character protagonist;
 		protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
 		protagonist.life = CHARACTER_MAX_LIFE;
-		ALLEGRO_FONT *fontScore = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.05 * HEIGHT), 0);
+		protagonist.score = 0;
+
+
+		weaponsList weapons;
 
 		while(true){
 
 			al_clear_to_color(al_map_rgb(130, 130, 130));
 			al_wait_for_event(event_queue, event);
 			al_draw_bitmap_region(protagonist.spritesWalking, (key[0] || key[1] || key[2] || key[3]) * frameCount * CHARACTER_FRAME_WIDHT, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDHT, CHARACTER_FRAME_HEIGHT, WIDTH/2 + xVariation, HEIGHT/2 + yVariation, 0);
-			al_draw_textf(fontScore, COLOR_WHITE, 20, 5, 0, "SCORE: %d", score);
+			al_draw_textf(fontScore, COLOR_WHITE, 20, 5, 0, "SCORE: %d", protagonist.score);
 			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, 5, ALLEGRO_ALIGN_RIGHT, "LIFE: %d", protagonist.life);
 			al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), ALLEGRO_ALIGN_LEFT, "Press [ESC] to menu");
 			al_flip_display();
@@ -34,19 +38,16 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 				}
 				switch(event->keyboard.keycode){
 					case ALLEGRO_KEY_W:
-						key[UP] = 1;
-						lastDirection = 0; break;
+						key[UP] = 1; break;
 					case ALLEGRO_KEY_S:
-						key[DOWN] = 1; 
-						lastDirection = 1; break;
+						key[DOWN] = 1; break;
 					case ALLEGRO_KEY_A:
-						key[LEFT] = 1;
-						lastDirection = 2; break;
+						key[LEFT] = 1; break;
 					case ALLEGRO_KEY_D:
-						key[RIGHT] = 1;
-						lastDirection = 3; break;
+						key[RIGHT] = 1; break;
 					case ALLEGRO_KEY_B:
 						protagonist.life -= 10;
+						protagonist.score += 5;
 						break;
 				}
 			}
@@ -69,5 +70,19 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 			yVariation += key[DOWN] * CHARACTER_SPEED;
 			xVariation -= key[LEFT] * CHARACTER_SPEED;
 			xVariation += key[RIGHT] * CHARACTER_SPEED;
+
+			LastKey(key, &lastDirection);
 	}
+}
+
+//Função de Direção dos Sprites
+void LastKey(int key[], int *lastDirection){
+	if(key[0] == 1)
+		*lastDirection = 0;
+	if(key[1] == 1)
+		*lastDirection = 1;
+	if(key[2] == 1)
+		*lastDirection = 2;
+	if(key[3] == 1)
+		*lastDirection = 3;
 }

@@ -6,5 +6,6 @@ enum KEYS {UP, DOWN, LEFT, RIGHT};
 void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		  ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
 		  ALLEGRO_EVENT *event);
+void LastKey(int key[], int *lastDirection);
 
 #endif //GAME_H
