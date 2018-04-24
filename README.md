@@ -3,14 +3,14 @@
 
 ### Controle de Projeto - Coisas há Fazer
 1. [ ] Gameplay
-    * [ ] Movimentação do Personagem
+    * [x] Movimentação do Personagem
     * [ ] Dash e Esquivas
     * [ ] Armas e Projéteis
     * [ ] Colisão
     * [ ] Menu
     * [ ] Cheats
 2. [ ]  Sprites
-    * [ ] Personagem Principal
+    * [x] Personagem Principal (Provisório)
     * [ ] Personagens Secundarios
     * [ ] Armas
     * [ ] Mapa
@@ -19,4 +19,4 @@
     * [ ] Listas
 4. [ ] Extras
     * [ ] EasterEggs
-    * [ ] Modularização Completa
+    * [x] Modularização Completa
