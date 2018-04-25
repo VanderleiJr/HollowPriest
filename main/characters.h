@@ -4,7 +4,7 @@
 typedef struct {
 	int life;
 	int score;
-	int stamina;
+	int weaponEquiped;
 	ALLEGRO_BITMAP *spritesWalking;
 }character;
 
@@ -18,23 +18,28 @@ typedef struct {
 	int ID;
 	float speed;
 	ALLEGRO_BITMAP *sprite;
+	ALLEGRO_BITMAP *spriteVertical;
+	ALLEGRO_BITMAP *spriteHorizontal;
 }projectile;
 
-typedef struct {
+typedef struct weapon{
 	int ID;
+	int numberAmmo;
 	char name[15];
+	struct weapon *next;
+	struct weapon *previous;
 	ALLEGRO_BITMAP *sprite;
 	projectile ammo;
 }typeWeapon;
 
 typedef struct {
-	typeWeapon weapon[5];
+	int quantity;
 	typeWeapon *first;
-} weaponsList;
+}weaponsList;
 
 typedef struct {
 	typeBoss bosses[5];
 	typeBoss *first;
-} bossesList;
+}bossesList;
 
 #endif //CHARACTERS_H
