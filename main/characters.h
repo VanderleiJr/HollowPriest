@@ -4,6 +4,8 @@
 typedef struct {
 	int life;
 	int score;
+	int speed;
+	float stamina;
 	int weaponEquiped;
 	ALLEGRO_BITMAP *spritesWalking;
 }character;

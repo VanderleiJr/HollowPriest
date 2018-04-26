@@ -25,8 +25,10 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		character protagonist;
 		protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
 		protagonist.weaponEquiped = 0;
-		protagonist.life = CHARACTER_MAX_LIFE;
 		protagonist.score = 0;
+		protagonist.speed = 3;
+		protagonist.life = CHARACTER_MAX_LIFE;
+		protagonist.stamina = CHARACTER_MAX_STAMINA;
 
 		weaponsList protagonistWeapons;
 
@@ -67,8 +69,9 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 			al_draw_bitmap(Search(protagonist.weaponEquiped, &protagonistWeapons)->ammo.sprite, xShot + xShotVariation, yShot + yShotVariation, shotRotation);
 
 			al_draw_textf(fontScore, COLOR_WHITE, WIDTH / 2, 5, ALLEGRO_ALIGN_CENTRE, "%06d", protagonist.score);
-			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, 5, ALLEGRO_ALIGN_RIGHT, "LIFE: %d", protagonist.life);
-			al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), ALLEGRO_ALIGN_LEFT, "Press [ESC] to menu");
+			al_draw_textf(fontScore, COLOR_WHITE, 0, 5, ALLEGRO_ALIGN_LEFT, "STAMINA: %.0f", protagonist.stamina);
+			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, -5, ALLEGRO_ALIGN_RIGHT, "LIFE: %d", protagonist.life);
+			al_draw_text(footer, COLOR_WHITE, WIDTH / 2, 5, ALLEGRO_ALIGN_CENTRE, "Press [ESC] to DIE");
 
 			if(keyShot[UP]){
 				yShotVariation -= Search(protagonist.weaponEquiped, &protagonistWeapons)->ammo.speed;
@@ -126,6 +129,10 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 
 				//Movimentação do Personagem
 				switch(event->keyboard.keycode){
+					case ALLEGRO_KEY_LSHIFT:
+						if(protagonist.stamina >= 5)
+							protagonist.speed += 8;
+						break;
 					case ALLEGRO_KEY_W:
 						key[UP] = 1; break;
 					case ALLEGRO_KEY_S:
@@ -138,6 +145,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 						protagonist.life -= 1;
 						protagonist.score += 5;
 						protagonist.weaponEquiped = !protagonist.weaponEquiped;
+						break;
 				}
 
 				//Ataque do Personagem
@@ -179,8 +187,12 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 					}
 				}
 			}
+
 			if(event->type == ALLEGRO_EVENT_KEY_UP){
 				switch(event->keyboard.keycode){
+					case ALLEGRO_KEY_LSHIFT:
+						protagonist.speed = 2;
+						break;
 					case ALLEGRO_KEY_W:
 						key[UP] = 0; break;
 					case ALLEGRO_KEY_S:
@@ -191,13 +203,32 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 						key[RIGHT] = 0; break;
 				}
 			}	
+
+			//Contador de Frame para animações do personagem
 			if(frameCount++ % FPS >= 8)
 				frameCount = 1;
 
-			yVariation -= key[UP] * CHARACTER_SPEED;
-			yVariation += key[DOWN] * CHARACTER_SPEED;
-			xVariation -= key[LEFT] * CHARACTER_SPEED;
-			xVariation += key[RIGHT] * CHARACTER_SPEED;
+			//Decremento Gradual de Stamina
+			if(protagonist.speed >= 5 && OrBitABit(key)){
+				protagonist.stamina -= 0.4;
+				if(protagonist.stamina <= 1){
+					protagonist.speed = 2;
+				}
+			}
+
+			//Aumento Gradual de Stamina
+			if(protagonist.stamina <= 100){
+				if(!OrBitABit(key))
+					protagonist.stamina += 0.15;
+				else
+					protagonist.stamina += 0.05;
+			}
+
+			//Movimentação do Personagem
+			yVariation -= key[UP] 	 * protagonist.speed;
+			yVariation += key[DOWN]  * protagonist.speed;
+			xVariation -= key[LEFT]  * protagonist.speed;
+			xVariation += key[RIGHT] * protagonist.speed;
 
 			LastKey(key, &lastDirection);
 	}
