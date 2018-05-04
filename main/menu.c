@@ -6,6 +6,7 @@ void Initializers(){
 	al_init_font_addon();
 	al_init_ttf_addon();
 	al_init_image_addon();
+	al_init_primitives_addon();
 	al_install_keyboard();
 }
 
@@ -114,8 +115,8 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 			}
 		}
 		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.525 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "New Game");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.600 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Configuration");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.675 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Records");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.600 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Last Plays");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.675 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Controls");
 		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.750 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Exit");
 		
 		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "By Vanderlei Junior");
@@ -154,14 +155,116 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 			}
 			switch(event->keyboard.keycode){
 				case ALLEGRO_KEY_W:
+				case ALLEGRO_KEY_UP:
 					selectOption--; break;
 				case ALLEGRO_KEY_S:
+				case ALLEGRO_KEY_DOWN:
 					selectOption++; break;
 			}
 			if(selectOption >= numberOptions)
 				selectOption = 0;
 			else if(selectOption < 0)
 				selectOption = numberOptions - 1;
+		}
+	}
+}
+
+void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
+		 ALLEGRO_TIMER *timer, ALLEGRO_EVENT *event){
+	
+	int position = 0;
+	char first = 'A', second = 'A' , third = 'A';
+	char gitgud[20];
+
+	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/TheNovice.ttf", 150, 0);
+	ALLEGRO_FONT *record = al_load_ttf_font("../media/fonts/TheNovice.ttf", 200, 0);
+
+	srand(time(NULL));
+	switch(rand()%4){
+		case 0:
+			strcpy(gitgud, "YOU DIED"); break;
+		case 1:
+			strcpy(gitgud, "SE FUDEU"); break;
+		case 2:
+			strcpy(gitgud, "FALECEU"); break;
+		case 3:
+			strcpy(gitgud, "VIROU ESTASTISTICA"); break;
+	}
+
+
+
+	while(true){
+		al_wait_for_event(event_queue, event);
+		
+		al_draw_filled_rectangle(0, (0.18 * HEIGHT), WIDTH, (0.80 * HEIGHT), COLOR_BLACK);
+
+		al_draw_text(title, COLOR_WHITE, (0.50 * WIDTH), (0.15 * HEIGHT), ALLEGRO_ALIGN_CENTRE, gitgud);
+		al_draw_textf(record, COLOR_WHITE, (0.35 * WIDTH), (0.40 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "%c", first);
+		al_draw_textf(record, COLOR_WHITE, (0.50 * WIDTH), (0.40 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "%c", second);
+		al_draw_textf(record, COLOR_WHITE, (0.65 * WIDTH), (0.40 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "%c", third);
+
+		al_flip_display();
+
+		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
+			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER || event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				al_destroy_font(title);
+				return ;
+			}
+
+			switch(event->keyboard.keycode){
+				case ALLEGRO_KEY_W:
+				case ALLEGRO_KEY_UP:
+					switch(position){
+						case 0:
+							first--;
+							if(first < 'A')
+								first = 'Z';
+							break;
+						case 1:
+							second--;
+							if(second < 'A')
+								second = 'Z';
+							break;
+						case 2:
+							third--;
+							if(third < 'A')
+								third = 'Z';
+							break;
+					}
+				break;
+				case ALLEGRO_KEY_S:
+				case ALLEGRO_KEY_DOWN:
+					switch(position){
+						case 0:
+							first++; 
+							if(first > 'Z')
+								first = 'A';
+							break;
+						case 1:
+							second++;
+							if(second > 'Z')
+								second = 'A';
+							break;
+						case 2:
+							third++;
+							if(third > 'Z')
+								third = 'A';
+							break;
+					}
+				break;
+				case ALLEGRO_KEY_A:
+				case ALLEGRO_KEY_LEFT:
+					position--;
+					if(position < 0)
+						position = 2;
+					break;
+				case ALLEGRO_KEY_D:
+				case ALLEGRO_KEY_RIGHT:
+					position++;
+					if(position > 2)
+						position = 0;
+					break;
+			}
 		}
 	}
 }
