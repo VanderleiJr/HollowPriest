@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#Imagens com direitos autorais
+bat.png
+darkness.png
+demon.png
+fireskull.png
+javali.png
+orb.png
+
+# Músicas com direitos autorais
+*.ogg

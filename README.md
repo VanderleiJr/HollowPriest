@@ -21,4 +21,4 @@
     * [x] EasterEggs (30/04/2018)
     * [x] Modularização Completa  
 
-> Todas as medias utilizadas nesse jogo são de propriedades de seus criadores.
+> Todas as medias aqui enviadas, foram feitas por Vanderlei Junior. As que não foram enviadas ou então, retiradas, possuem direitos autorais e pertencem aos seus donos.
