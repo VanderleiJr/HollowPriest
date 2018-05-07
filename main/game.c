@@ -1,14 +1,16 @@
 #include "includes.h"
 
 void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
-		  ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
-		  ALLEGRO_EVENT *event){
+		  ALLEGRO_SAMPLE *shot, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
+		  ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
 
+		int auxFrameCount = 0;
 		int frameCount = 0;
 		int lastDirection = 1;
 		int activeBoss = 0;
 		int lifeBar = 0;
 		int staminaBar = 0;
+		int rotatedBoss = 0;
 
 		float xShot = AMMO_POSITION_X;
 		float yShot = AMMO_POSITION_Y;
@@ -25,18 +27,20 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		ALLEGRO_BITMAP *gameFloor = al_load_bitmap("../media/sprites/game_floor.png");
 		ALLEGRO_BITMAP *weaponFrame = al_load_bitmap("../media/sprites/weapon_frame.png");
 		ALLEGRO_BITMAP *orbs = al_load_bitmap("../media/sprites/orb.png");
+
+		ALLEGRO_SAMPLE *game_background = al_load_sample("../media/sounds/gameSound.ogg");
 		
 		srand(time(NULL));
 
 		character protagonist;
 		protagonist.score = 0;
 		protagonist.speed = 3;
-		protagonist.weaponEquiped = 0;
+		protagonist.weaponEquiped = 1;
 		protagonist.life = CHARACTER_MAX_LIFE;
 		protagonist.stamina = CHARACTER_MAX_STAMINA;
-		protagonist.firstPositionX = (WIDTH / 2) - (CHARACTER_FRAME_WIDHT / 2);
+		protagonist.firstPositionX = (WIDTH / 2) - (CHARACTER_FRAME_WIDTH / 2);
 		protagonist.firstPositionY = (HEIGHT / 2) - (CHARACTER_FRAME_HEIGHT / 2);
-		protagonist.secondPositionX = protagonist.firstPositionX + CHARACTER_FRAME_WIDHT;
+		protagonist.secondPositionX = protagonist.firstPositionX + CHARACTER_FRAME_WIDTH;
 		protagonist.secondPositionY = protagonist.firstPositionY + CHARACTER_FRAME_HEIGHT;
 		protagonist.spritesWalking = al_load_bitmap("../media/sprites/walking.png");
 
@@ -84,44 +88,75 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		axe.ammo.sprite = al_load_bitmap("../media/sprites/projectile_axe_0.png");
 
 		//Lista de Boss
-		typeBoss demon;
-		strcpy(demon.name, "DEMON");
-		demon.totalLife = 150;
-		demon.life = demon.totalLife;
-		demon.speed = 1;
-		demon.damage = 0.2;
-		demon.frameWidht = 128;
-		demon.frameHeight = 128;
-		demon.firstPositionX = 0.8 * WIDTH;
-		demon.firstPositionY = 0.4 * HEIGHT;
-		demon.secondPositionX = demon.firstPositionX + demon.frameWidht;
-		demon.secondPositionY = demon.firstPositionY + demon.frameHeight;
-
-		typeBoss behemoth;
-		strcpy(behemoth.name, "BEHEMOTH");
-		behemoth.totalLife = 300;
-		behemoth.life = behemoth.totalLife;
-		behemoth.speed = 1;
-		behemoth.damage = 0.5;
-		behemoth.frameWidht = 256;
-		behemoth.frameHeight = 256;
-		behemoth.firstPositionX = 0.8 * WIDTH;
-		behemoth.firstPositionY = 0.4 * HEIGHT;
-		behemoth.secondPositionX = behemoth.firstPositionX + behemoth.frameWidht;
-		behemoth.secondPositionY = behemoth.firstPositionY + behemoth.frameHeight;
-
 		typeBoss bat;
 		strcpy(bat.name, "BAT");
 		bat.totalLife = 25;
 		bat.life = bat.totalLife;
-		bat.speed = 3;
-		bat.damage = 0.01;
-		bat.frameWidht = 32;
-		bat.frameHeight = 32;
+		bat.speed = 2.1;
+		bat.damage = 0.1;
+		bat.frameWidht = 55;
+		bat.frameHeight = 55;
 		bat.firstPositionX = 0.8 * WIDTH;
 		bat.firstPositionY = 0.4 * HEIGHT;
 		bat.secondPositionX = bat.firstPositionX + bat.frameWidht;
 		bat.secondPositionY = bat.firstPositionY + bat.frameHeight;
+		bat.sprite = al_load_bitmap("../media/sprites/bat.png");
+
+		typeBoss javali;
+		strcpy(javali.name, "JAVALI");
+		javali.totalLife = 150;
+		javali.life = javali.totalLife;
+		javali.speed = 1.8;
+		javali.damage = 0.2;
+		javali.frameWidht = 100;
+		javali.frameHeight = 68;
+		javali.firstPositionX = 0.8 * WIDTH;
+		javali.firstPositionY = 0.4 * HEIGHT;
+		javali.secondPositionX = javali.firstPositionX + javali.frameWidht;
+		javali.secondPositionY = javali.firstPositionY + javali.frameHeight;
+		javali.sprite = al_load_bitmap("../media/sprites/javali.png");
+		
+		typeBoss demon;
+		strcpy(demon.name, "DEMON");
+		demon.totalLife = 300;
+		demon.life = demon.totalLife;
+		demon.speed = 1.0;
+		demon.damage = 0.3;
+		demon.frameWidht = 100;
+		demon.frameHeight = 100;
+		demon.firstPositionX = 0.8 * WIDTH;
+		demon.firstPositionY = 0.4 * HEIGHT;
+		demon.secondPositionX = demon.firstPositionX + demon.frameWidht;
+		demon.secondPositionY = demon.firstPositionY + demon.frameHeight;
+		demon.sprite = al_load_bitmap("../media/sprites/demon.png");
+
+		typeBoss fireSkull;
+		strcpy(fireSkull.name, "FIRE SKULL");
+		fireSkull.totalLife = 450;
+		fireSkull.life = fireSkull.totalLife;
+		fireSkull.speed = 1.5;
+		fireSkull.damage = 0.4;
+		fireSkull.frameWidht = 200;
+		fireSkull.frameHeight = 100;
+		fireSkull.firstPositionX = 0.8 * WIDTH;
+		fireSkull.firstPositionY = 0.4 * HEIGHT;
+		fireSkull.secondPositionX = fireSkull.firstPositionX + fireSkull.frameWidht;
+		fireSkull.secondPositionY = fireSkull.firstPositionY + fireSkull.frameHeight;
+		fireSkull.sprite = al_load_bitmap("../media/sprites/fireskull.png");
+
+		typeBoss darknessLord;
+		strcpy(darknessLord.name, "DARKNESS LORD");
+		darknessLord.totalLife = 600;
+		darknessLord.life = darknessLord.totalLife;
+		darknessLord.speed = 1.0;
+		darknessLord.damage = 0.6;
+		darknessLord.frameWidht = 300;
+		darknessLord.frameHeight = 300;
+		darknessLord.firstPositionX = 0.8 * WIDTH;
+		darknessLord.firstPositionY = 0.4 * HEIGHT;
+		darknessLord.secondPositionX = darknessLord.firstPositionX + darknessLord.frameWidht;
+		darknessLord.secondPositionY = darknessLord.firstPositionY + darknessLord.frameHeight;
+		darknessLord.sprite = al_load_bitmap("../media/sprites/darkness.png");
 
 		//Inicializa a lista com TODAS AS ARMAS
 		weaponsList allWeapons;
@@ -137,35 +172,47 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 		bossesList allBosses;
 		CreateListBosses(&allBosses);
 
-		LoadBoss(&demon, &allBosses);
-		LoadBoss(&behemoth, &allBosses);
 		LoadBoss(&bat, &allBosses);
+		LoadBoss(&javali, &allBosses);
+		LoadBoss(&demon, &allBosses);
+		LoadBoss(&fireSkull, &allBosses);
+		LoadBoss(&darknessLord, &allBosses);
 
 		//Inicializa a lista de armas do personagem
 		CreateListWeapons(&protagonist.weapons);
 		InsertionWeapon(SearchByID((rand() % 5), &allWeapons), &protagonist.weapons);
+
+		al_set_sample(inst_sound_background, game_background);
+		al_set_sample_instance_gain(inst_sound_background, 0.5);
+		al_play_sample_instance(inst_sound_background);
+
 
 		while(true){
 
 			al_draw_bitmap(gameFloor, 0, 0, 0);
 			al_wait_for_event(event_queue, event);
 			
-			al_draw_bitmap_region(protagonist.spritesWalking, (OrBitABit(key)) * frameCount * CHARACTER_FRAME_WIDHT, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDHT, CHARACTER_FRAME_HEIGHT, protagonist.firstPositionX, protagonist.firstPositionY, 0);
-			al_draw_bitmap(weaponFrame, (WIDTH * 0.464), (HEIGHT * 0.85), 0);
+			al_draw_bitmap_region(allBosses.bosses[activeBoss].sprite, (frameCount * allBosses.bosses[activeBoss].frameWidht), 0, allBosses.bosses[activeBoss].frameWidht, allBosses.bosses[activeBoss].frameHeight, allBosses.bosses[activeBoss].firstPositionX, allBosses.bosses[activeBoss].firstPositionY, (rotatedBoss * ALLEGRO_FLIP_HORIZONTAL));
+			al_draw_bitmap_region(protagonist.spritesWalking, (OrBitABit(key)) * frameCount * CHARACTER_FRAME_WIDTH, lastDirection * CHARACTER_FRAME_HEIGHT, CHARACTER_FRAME_WIDTH, CHARACTER_FRAME_HEIGHT, protagonist.firstPositionX, protagonist.firstPositionY, 0);
+			al_draw_bitmap(weaponFrame, (WIDTH * 0.429), (HEIGHT * 0.85), 0);
 			al_draw_rotated_bitmap(Search(protagonist.weaponEquiped, &protagonist.weapons)->ammo.sprite, 25, 31.5, xShot + xShotVariation, yShot + yShotVariation, shotRotation, 0);
-			
+			al_draw_scaled_bitmap(Search(protagonist.weaponEquiped, &protagonist.weapons)->next->ammo.sprite, 0, 0, 50, 63, (WIDTH * 0.435), (HEIGHT * 0.855) ,33.3, 42, 0);
+			al_draw_scaled_bitmap(Search(protagonist.weaponEquiped, &protagonist.weapons)->previous->ammo.sprite, 0, 0, 50, 63, (WIDTH * 0.54), (HEIGHT * 0.855) ,33.3, 42, 0);
+
+
 			al_draw_bitmap_region(orbs, lifeBar, 0, 194, 162, WIDTH - 194, HEIGHT - 162, 0);
 			al_draw_bitmap_region(orbs, staminaBar, 162, 194, 162, 0, HEIGHT - 162, 0);
 
 			//Hitboxs
 			//al_draw_rectangle(protagonist.firstPositionX, protagonist.firstPositionY, protagonist.secondPositionX, protagonist.secondPositionY, COLOR_WHITE, 0);
 			//al_draw_rectangle(xShot + xShotVariation - 10, yShot + yShotVariation - 15, xShot + xShotVariation + 10, yShot + yShotVariation + 15, COLOR_WHITE, 0);
-			al_draw_rectangle(allBosses.bosses[activeBoss].firstPositionX, allBosses.bosses[activeBoss].firstPositionY, allBosses.bosses[activeBoss].secondPositionX, allBosses.bosses[activeBoss].secondPositionY, COLOR_WHITE, 0);
+			//al_draw_rectangle(allBosses.bosses[activeBoss].firstPositionX, allBosses.bosses[activeBoss].firstPositionY, allBosses.bosses[activeBoss].secondPositionX, allBosses.bosses[activeBoss].secondPositionY, COLOR_WHITE, 0);
 
 			al_draw_textf(fontScore, COLOR_WHITE, WIDTH / 2, 5, ALLEGRO_ALIGN_CENTRE, "%06d", protagonist.score);
 			al_draw_textf(fontScore, COLOR_GREEN, 100, HEIGHT - 100, ALLEGRO_ALIGN_CENTRE, "%.0f", protagonist.stamina);
 			al_draw_textf(fontScore, COLOR_RED, WIDTH - 100, HEIGHT - 100, ALLEGRO_ALIGN_CENTRE, "%.0f", protagonist.life);
-			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, 40, ALLEGRO_ALIGN_RIGHT, "BOSS: %d", allBosses.bosses[activeBoss].life);
+			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, 0, ALLEGRO_ALIGN_RIGHT, "BOSS: %s", allBosses.bosses[activeBoss].name);
+			al_draw_textf(fontScore, COLOR_WHITE, WIDTH - 20, 40, ALLEGRO_ALIGN_RIGHT, "LIFE: %d", allBosses.bosses[activeBoss].life);
 			al_draw_text(footer, COLOR_WHITE, WIDTH / 2, 0, ALLEGRO_ALIGN_CENTRE, "Press [ESC] to DIE");
 			
 			if(keyShot[UP]){
@@ -227,18 +274,22 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 
 			if(event->type == ALLEGRO_EVENT_KEY_DOWN){
 				if(event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+					Die(display, event_queue, timer, event, inst_sound_background);
 					al_destroy_bitmap(protagonist.spritesWalking);
 					al_destroy_bitmap(gameFloor);
 					al_destroy_bitmap(weaponFrame);
-					//al_destroy_bitmap(demon.sprite);
-					//al_destroy_bitmap(behemoth.sprite);
-					//al_destroy_bitmap(bat.sprite);
+					al_destroy_bitmap(orbs);
+					al_destroy_bitmap(bat.sprite);
+					al_destroy_bitmap(javali.sprite);
+					al_destroy_bitmap(demon.sprite);
+					al_destroy_bitmap(fireSkull.sprite);
 					al_destroy_bitmap(bow.ammo.sprite);
 					al_destroy_bitmap(knife.ammo.sprite);
 					al_destroy_bitmap(lance.ammo.sprite);
 					al_destroy_bitmap(shuriken.ammo.sprite);
 					al_destroy_bitmap(axe.ammo.sprite);
 					al_destroy_font(fontScore);
+					al_destroy_sample(game_background);
 					return ;
 				}
 
@@ -256,15 +307,22 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 						key[LEFT] = 1; break;
 					case ALLEGRO_KEY_D:
 						key[RIGHT] = 1; break;
-					case ALLEGRO_KEY_B:
+					case ALLEGRO_KEY_Q:
 						if(!OrBitABit(keyShot))
 							protagonist.weaponEquiped++;
-						if(protagonist.weaponEquiped >= protagonist.weapons.quantity)
-							protagonist.weaponEquiped = 0;
+						if(protagonist.weaponEquiped > protagonist.weapons.quantity)
+							protagonist.weaponEquiped = 1;
 						break;
-					case ALLEGRO_KEY_V:
-						if(RemoveWeapon(protagonist.weaponEquiped, &protagonist.weapons))
-							protagonist.weaponEquiped = 0;
+					case ALLEGRO_KEY_E:
+						if(!OrBitABit(keyShot))
+							protagonist.weaponEquiped--;
+						if(protagonist.weaponEquiped <= 0)
+							protagonist.weaponEquiped = protagonist.weapons.quantity;
+						break;
+					case ALLEGRO_KEY_SPACE:
+						if(!OrBitABit(keyShot))
+							if(RemoveWeapon(protagonist.weaponEquiped, &protagonist.weapons))
+								protagonist.weaponEquiped = 1;
 						break;
 				}
 
@@ -273,6 +331,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 					switch(event->keyboard.keycode){
 						case ALLEGRO_KEY_UP:
 							if(!keyShot[UP]){
+								al_play_sample(shot, 1.1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 								xShot = protagonist.firstPositionX + 24;
 								yShot = protagonist.firstPositionY + 36;
 								keyShot[UP] = 1;
@@ -281,6 +340,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 							break;
 						case ALLEGRO_KEY_DOWN:
 							if(!keyShot[DOWN]){
+								al_play_sample(shot, 1.1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 								xShot = protagonist.firstPositionX + 24;
 								yShot = protagonist.firstPositionY + 56;
 								keyShot[DOWN] = 1;
@@ -289,6 +349,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 							break;
 						case ALLEGRO_KEY_LEFT:
 							if(!keyShot[LEFT]){
+								al_play_sample(shot, 1.1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 								xShot = protagonist.firstPositionX + 24;
 								yShot = protagonist.firstPositionY + 46;
 								keyShot[LEFT] = 1;
@@ -297,6 +358,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 							break;
 						case ALLEGRO_KEY_RIGHT:
 							if(!keyShot[RIGHT]){
+								al_play_sample(shot, 1.1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 								xShot = protagonist.firstPositionX + 24;
 								yShot = protagonist.firstPositionY + 46;
 								keyShot[RIGHT] = 1;
@@ -325,8 +387,10 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 			}	
 
 			//Contador de Frame para animações do personagem
-			if(frameCount++ % FPS >= 8)
-				frameCount = 1;
+			frameCount = ++auxFrameCount / 3;
+			if(frameCount >= 7){
+				auxFrameCount = 0;
+			}
 
 			//Perca de Vida por Colisão
 			if(ColisionCharacterBoss(&protagonist, &allBosses.bosses[activeBoss]))
@@ -365,9 +429,49 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 			protagonist.secondPositionX += key[RIGHT] * protagonist.speed;
 			LastKey(key, &lastDirection);
 
+			if(((allBosses.bosses[activeBoss].firstPositionX + allBosses.bosses[activeBoss].secondPositionX) / 2) < ((protagonist.firstPositionX + protagonist.secondPositionX) / 2))
+				rotatedBoss = 1;
+			else
+				rotatedBoss = 0;
+
+			//Bordas da tela
+			if(protagonist.firstPositionX < 0){
+				protagonist.firstPositionX = 0;
+				protagonist.secondPositionX = CHARACTER_FRAME_WIDTH;
+			}
+			if(protagonist.secondPositionX > WIDTH){
+				protagonist.firstPositionX = WIDTH - CHARACTER_FRAME_WIDTH;
+				protagonist.secondPositionX = WIDTH;
+			}
+
+			if(protagonist.firstPositionY < 0){
+				protagonist.firstPositionY = 0;
+				protagonist.secondPositionY = CHARACTER_FRAME_HEIGHT;
+			}
+
+			if(protagonist.secondPositionY > HEIGHT){
+				protagonist.firstPositionY = HEIGHT - CHARACTER_FRAME_HEIGHT;
+				protagonist.secondPositionY = HEIGHT;
+			}
+
 			//Condição de Morte do Personagem
 			if(protagonist.life <= 0){
-				Die(display, event_queue, timer, event);
+				Die(display, event_queue, timer, event, inst_sound_background);
+				al_destroy_bitmap(protagonist.spritesWalking);
+				al_destroy_bitmap(gameFloor);
+				al_destroy_bitmap(weaponFrame);
+				al_destroy_bitmap(orbs);
+				al_destroy_bitmap(bat.sprite);
+				al_destroy_bitmap(javali.sprite);
+				al_destroy_bitmap(demon.sprite);
+				al_destroy_bitmap(fireSkull.sprite);
+				al_destroy_bitmap(bow.ammo.sprite);
+				al_destroy_bitmap(knife.ammo.sprite);
+				al_destroy_bitmap(lance.ammo.sprite);
+				al_destroy_bitmap(shuriken.ammo.sprite);
+				al_destroy_bitmap(axe.ammo.sprite);
+				al_destroy_font(fontScore);
+				al_destroy_sample(game_background);
 				return ;
 			}
 
@@ -393,6 +497,9 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 				DeadBoss(activeBoss, &allBosses);
 				InsertionWeapon(SearchByID((rand() % 5), &allWeapons), &protagonist.weapons);
 				activeBoss++;
+				protagonist.stamina += 10;
+				if(protagonist.stamina > 100)
+					protagonist.stamina = 100;
 				if(activeBoss >= allBosses.quantity){
 					protagonist.life += 25;
 					activeBoss = 0;

@@ -82,32 +82,32 @@ int RemoveWeapon(int position, weaponsList *list){
 		case 1:
 			return 0;
 		case 2:
-			if(!position){
+			if(position){
 				aux = list->first;
 				list->first = list->first->next;
 			} else {
 				aux = list->last;
 				list->last = list->last->next;
 			}
-			list->first->next = NULL;
-			list->first->previous = NULL;
+			list->first->next = list->first;
+			list->first->previous = list->first;
 			list->quantity--;
 			free(aux);
 			return 1;
 		case 3:
 			switch(position){
-				case 0:
+				case 1:
 					aux = list->first;
 					list->first = list->first->next;
 					list->first->previous = list->last;
 					list->last->next = list->first;
 					break;
-				case 1:
+				case 2:
 					aux = list->first->next;
 					list->first->next = list->last;
 					list->last->previous = list->first;
 					break;
-				case 2:
+				case 3:
 					aux = list->last;
 					list->last = list->last->previous;
 					list->first->previous = list->last;
@@ -131,9 +131,9 @@ void DeadBoss(int position, bossesList * list){
 
 typeWeapon * Search(int position, weaponsList *list){
 	switch(position){
-		case 0:
-			return list->first;
 		case 1:
+			return list->first;
+		case 2:
 			return list->first->next;
 		default:
 			return list->first->previous;

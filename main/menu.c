@@ -7,6 +7,9 @@ void Initializers(){
 	al_init_ttf_addon();
 	al_init_image_addon();
 	al_init_primitives_addon();
+	al_init_acodec_addon();
+	al_install_audio();
+	al_reserve_samples(10);
 	al_install_keyboard();
 }
 
@@ -24,6 +27,13 @@ void FirstMenu(){
 	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/FancyCardText.ttf", (0.1625 * HEIGHT), 0);
 	ALLEGRO_FONT *font50 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.0625 * HEIGHT), 0);
 	ALLEGRO_FONT *footer = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.01875 * HEIGHT), 0);
+
+	ALLEGRO_SAMPLE *sound_background = al_load_sample("../media/sounds/menuSound.ogg");
+	ALLEGRO_SAMPLE_INSTANCE *inst_sound_background = al_create_sample_instance(sound_background);
+	al_attach_sample_instance_to_mixer(inst_sound_background, al_get_default_mixer());
+	al_set_sample_instance_playmode(inst_sound_background, ALLEGRO_PLAYMODE_LOOP);
+	al_set_sample_instance_gain(inst_sound_background, 0.8);
+
 	ALLEGRO_BITMAP *menu_background = al_load_bitmap("../media/sprites/menu_background.jpg");
 	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
 	ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
@@ -63,6 +73,9 @@ void FirstMenu(){
 
 		al_draw_text(footer, COLOR_WHITE, WIDTH/2, HEIGHT - (0.025 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Press [ESC] to exit");
 		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "By Vanderlei Junior");
+
+		al_play_sample_instance(inst_sound_background);
+
 		al_flip_display();
 		al_wait_for_event(event_queue, &event);
 
@@ -73,7 +86,7 @@ void FirstMenu(){
 			}
 			//ENTER para INICIAR
 			if(event.keyboard.keycode == ALLEGRO_KEY_ENTER){
-				SecondMenu(display, menu_background, title, footer, font50, event_queue, timer, &event);
+				SecondMenu(display, menu_background, title, footer, font50, sound_background, event_queue, timer, &event, inst_sound_background);
 			}
 		menu = !menu;
 		}
@@ -86,11 +99,12 @@ void FirstMenu(){
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
 	al_destroy_display(display);
+	al_destroy_sample(sound_background);
 }
 
 void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEGRO_FONT *title, ALLEGRO_FONT *footer,
-		  		ALLEGRO_FONT *font50, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
-		  		ALLEGRO_EVENT *event){
+		  		ALLEGRO_FONT *font50, ALLEGRO_SAMPLE *sound_background, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer,
+		  		ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
 
 	const int numberOptions = 4;
 	int selectOption = 0;
@@ -99,6 +113,8 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 
 	ALLEGRO_FONT *subtitle = al_load_ttf_font("../media/fonts/FancyCardText.ttf", (0.1375 * HEIGHT), 0);
 	ALLEGRO_BITMAP *cursor = al_load_bitmap("../media/sprites/cursor.png");
+
+	ALLEGRO_SAMPLE *shot = al_load_sample("../media/sounds/shot.ogg");
 	
 	while(true){
 		al_draw_bitmap(menu_background, -270, 0, 0);
@@ -146,7 +162,17 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER){
 				switch(selectOption){
 					case 0:
-						Game(display, footer, event_queue, timer, event);
+						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+						Game(display, footer, shot, event_queue, timer, event, inst_sound_background);
+						al_set_sample(inst_sound_background, sound_background);
+						al_set_sample_instance_gain(inst_sound_background, 0.8);
+						al_play_sample_instance(inst_sound_background);
+						break;
+					case 1:
+						break;
+					case 2:
+						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+						Controls(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
 						break;
 					case 3:
 						al_destroy_font(subtitle);
@@ -169,8 +195,59 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 	}
 }
 
+void Controls(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer, ALLEGRO_FONT *subtitle,
+			  ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer, ALLEGRO_BITMAP *menu_background,
+			  ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
+
+	ALLEGRO_FONT *font40 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.08 * HEIGHT), 0);
+	ALLEGRO_BITMAP *wasd = al_load_bitmap("../media/sprites/controls_wasd.png");
+	ALLEGRO_BITMAP *direction = al_load_bitmap("../media/sprites/controls_direction.png");
+	ALLEGRO_BITMAP *shift = al_load_bitmap("../media/sprites/controls_shift.png");
+	ALLEGRO_BITMAP *change = al_load_bitmap("../media/sprites/controls_qe.png");
+	ALLEGRO_BITMAP *drop = al_load_bitmap("../media/sprites/controls_space.png");
+
+
+	while(true){
+		al_wait_for_event(event_queue, event);
+
+		al_draw_bitmap(menu_background, -270, 0, 0);
+		al_draw_text(subtitle, COLOR_RED, (0.5 * WIDTH), 0, ALLEGRO_ALIGN_CENTRE, "Controls");
+		al_draw_text(font40, COLOR_WHITE, (0.02 * WIDTH), (0.2 * HEIGHT), 0, "Movimentation: ");
+		al_draw_scaled_bitmap(wasd, 0, 0, 70, 20, (0.30 * WIDTH), (0.24 * HEIGHT), 280, 80, 0);
+
+		al_draw_text(font40, COLOR_WHITE, (0.6 * WIDTH), (0.2 * HEIGHT), 0, "Run: ");
+		al_draw_scaled_bitmap(shift, 0, 0, 50, 20, (0.68 * WIDTH), (0.23 * HEIGHT), 200, 80, 0);
+
+		al_draw_text(font40, COLOR_WHITE, (0.02 * WIDTH), (0.4 * HEIGHT), 0, "Shot: ");
+		al_draw_scaled_bitmap(direction, 0, 0, 70, 20, (0.11 * WIDTH), (0.44 * HEIGHT), 280, 80, 0);
+
+		al_draw_text(font40, COLOR_WHITE, (0.02 * WIDTH), (0.6 * HEIGHT), 0, "Change Weapon: ");
+		al_draw_scaled_bitmap(change, 0, 0, 50, 20, (0.32 * WIDTH), (0.63 * HEIGHT), 200, 80, 0);
+
+		al_draw_text(font40, COLOR_WHITE, (0.02 * WIDTH), (0.8 * HEIGHT), 0, "Drop Weapon: ");
+		al_draw_scaled_bitmap(drop, 0, 0, 60, 20, (0.28 * WIDTH), (0.83 * HEIGHT), 240, 80, 0);
+		
+
+		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "Feito por Vanderlei de Brito Junior");
+		al_flip_display();
+		
+		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
+			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER || event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				al_destroy_font(font40);
+				al_destroy_bitmap(wasd);
+				al_destroy_bitmap(direction);
+				al_destroy_bitmap(shift);
+				al_destroy_bitmap(change);
+				al_destroy_bitmap(drop);
+				return ;
+			}
+		}
+	}
+
+}
+
 void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
-		 ALLEGRO_TIMER *timer, ALLEGRO_EVENT *event){
+		 ALLEGRO_TIMER *timer, ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
 	
 	int position = 0;
 	char first = 'A', second = 'A' , third = 'A';
@@ -178,6 +255,8 @@ void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
 
 	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/TheNovice.ttf", 150, 0);
 	ALLEGRO_FONT *record = al_load_ttf_font("../media/fonts/TheNovice.ttf", 200, 0);
+	ALLEGRO_BITMAP *cursor = al_load_bitmap("../media/sprites/cursor.png");
+	ALLEGRO_SAMPLE *gameOver_background = al_load_sample("../media/sounds/gameOverSound.ogg");
 
 	srand(time(NULL));
 	switch(rand()%4){
@@ -191,12 +270,16 @@ void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
 			strcpy(gitgud, "VIROU ESTASTISTICA"); break;
 	}
 
-
+	al_set_sample(inst_sound_background, gameOver_background);
+	al_set_sample_instance_gain(inst_sound_background, 0.5);
+	al_play_sample_instance(inst_sound_background);
 
 	while(true){
 		al_wait_for_event(event_queue, event);
 		
 		al_draw_filled_rectangle(0, (0.18 * HEIGHT), WIDTH, (0.80 * HEIGHT), COLOR_BLACK);
+
+		al_draw_bitmap(cursor, (0.34 * WIDTH) + (position * (0.15 * WIDTH)), (0.45 * HEIGHT), 0);
 
 		al_draw_text(title, COLOR_WHITE, (0.50 * WIDTH), (0.15 * HEIGHT), ALLEGRO_ALIGN_CENTRE, gitgud);
 		al_draw_textf(record, COLOR_WHITE, (0.35 * WIDTH), (0.40 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "%c", first);
@@ -208,6 +291,9 @@ void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
 		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
 			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER || event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
 				al_destroy_font(title);
+				al_destroy_font(record);
+				al_destroy_bitmap(cursor);
+				al_destroy_sample(gameOver_background);
 				return ;
 			}
 

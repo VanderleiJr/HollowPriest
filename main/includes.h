@@ -11,6 +11,8 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_primitives.h>
 //Bibliotecas Próprias
 #include "menu.h"
@@ -28,7 +30,7 @@
 
 #define CHARACTER_MAX_LIFE 100
 #define CHARACTER_MAX_STAMINA 100
-#define CHARACTER_FRAME_WIDHT 48
+#define CHARACTER_FRAME_WIDTH 48
 #define CHARACTER_FRAME_HEIGHT 72
 
 #define AMMO_POSITION_X ((0.5 * WIDTH))
