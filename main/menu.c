@@ -131,8 +131,8 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 			}
 		}
 		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.525 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "New Game");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.600 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Last Plays");
-		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.675 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Controls");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.600 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Controls");
+		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.675 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Records");
 		al_draw_text(font50, COLOR_WHITE, WIDTH / 2, (0.750 * HEIGHT), ALLEGRO_ALIGN_CENTRE, "Exit");
 		
 		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "By Vanderlei Junior");
@@ -170,11 +170,11 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 						break;
 					case 1:
 						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-						Records(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
+						Controls(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
 						break;
 					case 2:
 						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-						Controls(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
+						Records(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
 						break;
 					case 3:
 						al_destroy_font(subtitle);
