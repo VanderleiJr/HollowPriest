@@ -169,6 +169,8 @@ void SecondMenu(ALLEGRO_DISPLAY *display, ALLEGRO_BITMAP *menu_background, ALLEG
 						al_play_sample_instance(inst_sound_background);
 						break;
 					case 1:
+						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+						Records(display, footer, subtitle, event_queue, timer, menu_background, event, inst_sound_background);
 						break;
 					case 2:
 						al_play_sample(shot, 1.3, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
@@ -246,12 +248,67 @@ void Controls(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer, ALLEGRO_FONT *subt
 
 }
 
-void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
+void Records(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer, ALLEGRO_FONT *subtitle,
+			  ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer, ALLEGRO_BITMAP *menu_background,
+			  ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
+
+	Score record[3];
+	FILE *records = fopen("records", "rb");
+	if(records == NULL){
+		records = fopen("records", "wb");
+		for(int i = 0; i < 3; i++){
+			strcpy(record[i].name, "AAA");
+			record[i].score = 0;
+		}
+		fwrite(&record, sizeof(Score), 3, records);
+	}
+	ALLEGRO_FONT *font60 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.12 * HEIGHT), 0);
+	ALLEGRO_FONT *font30 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.06 * HEIGHT), 0);
+	ALLEGRO_FONT *font20 = al_load_ttf_font("../media/fonts/TheNovice.ttf", (0.04 * HEIGHT), 0);
+
+
+	fread(&record, sizeof(Score), 3, records);
+
+	while(true){
+		al_wait_for_event(event_queue, event);
+
+		al_draw_bitmap(menu_background, -270, 0, 0);
+		al_draw_text(subtitle, COLOR_RED, (0.5 * WIDTH), 0, ALLEGRO_ALIGN_CENTRE, "Records");
+
+		al_draw_text(font60, COLOR_WHITE, (WIDTH * 0.45), (HEIGHT * 0.35), ALLEGRO_ALIGN_RIGHT, record[0].name);
+		al_draw_textf(font60, COLOR_WHITE, (WIDTH * 0.55), (HEIGHT * 0.35), 0, "%06d", record[0].score);
+
+		al_draw_text(font30, COLOR_WHITE, (WIDTH * 0.45), (HEIGHT * 0.55), ALLEGRO_ALIGN_RIGHT, record[1].name);
+		al_draw_textf(font30, COLOR_WHITE, (WIDTH * 0.55), (HEIGHT * 0.55), 0, "%06d", record[1].score);
+
+		al_draw_text(font20, COLOR_WHITE, (WIDTH * 0.45), (HEIGHT * 0.65), ALLEGRO_ALIGN_RIGHT, record[2].name);
+		al_draw_textf(font20, COLOR_WHITE, (WIDTH * 0.55), (HEIGHT * 0.65), 0, "%06d", record[2].score);
+
+		al_draw_text(footer, COLOR_WHITE, 0, HEIGHT - (0.025 * HEIGHT), 0, "Feito por VanGOD");
+		al_flip_display();
+
+		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
+			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER || event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				al_destroy_font(font60);
+				al_destroy_font(font30);
+				al_destroy_font(font20);
+				if(records != NULL)
+					fclose(records);
+				return ;
+			}
+		}
+	}
+
+}
+
+void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue, int pontuation,
 		 ALLEGRO_TIMER *timer, ALLEGRO_EVENT *event, ALLEGRO_SAMPLE_INSTANCE *inst_sound_background){
 	
 	int position = 0;
 	char first = 'A', second = 'A' , third = 'A';
 	char gitgud[20];
+
+	FILE *records = fopen("records", "r+b");
 
 	ALLEGRO_FONT *title = al_load_ttf_font("../media/fonts/TheNovice.ttf", 150, 0);
 	ALLEGRO_FONT *record = al_load_ttf_font("../media/fonts/TheNovice.ttf", 200, 0);
@@ -290,6 +347,50 @@ void Die(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue,
 
 		if(event->type == ALLEGRO_EVENT_KEY_DOWN){
 			if(event->keyboard.keycode == ALLEGRO_KEY_ENTER || event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				Score dieCharacter;
+				Score savedScore[3];
+
+				dieCharacter.name[0] = first;
+				dieCharacter.name[1] = second;
+				dieCharacter.name[2] = third;
+				dieCharacter.name[3] = '\0';
+				dieCharacter.score = pontuation;
+
+				if(records == NULL){
+					records = fopen("records", "wb");
+					for(int i = 0; i < 3; i++){
+						strcpy(savedScore[i].name, "AAA");
+						savedScore[i].score = 0;
+					}
+					fwrite(&savedScore, sizeof(Score), 3, records);
+				}
+
+				fread(&savedScore, sizeof(Score), 3, records);
+
+				if(dieCharacter.score > savedScore[0].score){
+					strcpy(savedScore[2].name, savedScore[1].name);
+					savedScore[2].score = savedScore[1].score;
+
+					strcpy(savedScore[1].name, savedScore[0].name);
+					savedScore[1].score = savedScore[0].score;
+
+					strcpy(savedScore[0].name, dieCharacter.name);
+					savedScore[0].score = dieCharacter.score;
+				} else if(dieCharacter.score > savedScore[1].score){
+					strcpy(savedScore[2].name, savedScore[1].name);
+					savedScore[2].score = savedScore[1].score;
+
+					strcpy(savedScore[1].name, dieCharacter.name);
+					savedScore[1].score = dieCharacter.score;
+				} else if(dieCharacter.score > savedScore[2].score){
+					strcpy(savedScore[2].name, dieCharacter.name);
+					savedScore[2].score = dieCharacter.score;
+				}
+
+				fseek(records, 0, 0);
+				fwrite(&savedScore, sizeof(Score), 3, records);
+
+				fclose(records);
 				al_destroy_font(title);
 				al_destroy_font(record);
 				al_destroy_bitmap(cursor);

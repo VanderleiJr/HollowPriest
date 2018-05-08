@@ -274,7 +274,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 
 			if(event->type == ALLEGRO_EVENT_KEY_DOWN){
 				if(event->keyboard.keycode == ALLEGRO_KEY_ESCAPE){
-					Die(display, event_queue, timer, event, inst_sound_background);
+					Die(display, event_queue, protagonist.score, timer, event, inst_sound_background);
 					al_destroy_bitmap(protagonist.spritesWalking);
 					al_destroy_bitmap(gameFloor);
 					al_destroy_bitmap(weaponFrame);
@@ -456,7 +456,7 @@ void Game(ALLEGRO_DISPLAY *display, ALLEGRO_FONT *footer,
 
 			//Condição de Morte do Personagem
 			if(protagonist.life <= 0){
-				Die(display, event_queue, timer, event, inst_sound_background);
+				Die(display, event_queue, protagonist.score, timer, event, inst_sound_background);
 				al_destroy_bitmap(protagonist.spritesWalking);
 				al_destroy_bitmap(gameFloor);
 				al_destroy_bitmap(weaponFrame);

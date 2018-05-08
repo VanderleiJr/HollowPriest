@@ -1,6 +1,11 @@
 #ifndef CHARACTERS_H
 #define CHARACTERS_H
 
+typedef struct {
+	char name[4];
+	int score;
+} Score;
+
 
 typedef struct boss{
 	int life;
