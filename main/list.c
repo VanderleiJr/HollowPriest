@@ -82,7 +82,7 @@ int RemoveWeapon(int position, weaponsList *list){
 		case 1:
 			return 0;
 		case 2:
-			if(position){
+			if(position == 1){
 				aux = list->first;
 				list->first = list->first->next;
 			} else {

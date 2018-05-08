@@ -13,14 +13,13 @@
     * [x] Armas e Projéteis (Sistema por lista) - (25/04/2018)
     * [x] Colisão - (30/04/2018)
     * [x] Menu - (25/04/2018 ~ ...)
-    * [-] Cheats
 2. [x]  Sprites
     * [x] Personagem Principal - (21/04/2018)
-    * [-] Personagens Secundarios
     * [x] Armas - (30/04/2018)
     * [x] Mapa - (30/04/2018)
     * [x] Chefes
 3. [x] Implementações
+    * [x] Arquivo (08/05/2018)
     * [x] Listas (Encadeada Duplamente-Ligada) - (25/04/2018)
 4. [x] Extras
     * [x] EasterEggs (30/04/2018)
