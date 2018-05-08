@@ -2,6 +2,7 @@
 > Jogo em desenvolvimento para a disciplina de Estrutura de Dados 2018-1 na UFSCar. Desenvolvido utilizando C e Allegro5 para mostrar os conhecimentos adquiritos na disciplina em TAD (Tipos Abstratos de Dados).
 
 ![intro](https://user-images.githubusercontent.com/29966351/39731086-cc024114-523b-11e8-8dec-0d86eab629be.gif)
+![menu](https://user-images.githubusercontent.com/29966351/39731243-dd5ea136-523c-11e8-860f-807ed204db94.gif)
 
 ### Controle de Projeto - Coisas há Fazer
 1. [x] Gameplay
